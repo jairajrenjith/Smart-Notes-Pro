@@ -102,7 +102,6 @@ function renderNotes() {
         return sortResult;
     });
 
-    // Condition A: Notes list is empty AND search bar is empty (Initial State)
     if (notes.length === 0 && searchTerm.trim() === '') {
         notesContainer.innerHTML = `
             <div class="no-results-message">
@@ -111,7 +110,6 @@ function renderNotes() {
             </div>
         `;
     } 
-    // Condition B: Filtered notes list is empty (A search failed, OR notes list is totally empty but user searched)
     else if (filteredNotes.length === 0) {
         notesContainer.innerHTML = `
             <div class="no-results-message">
@@ -121,7 +119,6 @@ function renderNotes() {
             </div>
         `;
     } 
-    // Condition C: Show Notes (Successful search OR empty search bar when notes exist)
     else {
         notesContainer.innerHTML = filteredNotes.map(note => 
             createNoteCardHTML(note, searchTerm)
