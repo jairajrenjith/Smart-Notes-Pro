@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Notes Pro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="light-mode">
+    <header>
+        <div class="app-logo">
+            <img src="logo.png" alt="Smart Notes Pro Logo" class="logo-image">
+            <h1><span class="accent">Smart</span> Notes Pro</h1>
+        </div>
+        <div class="controls">
+            <button id="mode-toggle">☀️/🌙</button>
+            <button id="add-note-btn">➕ Add New Note</button>
+        </div>
+    </header>
+
+    <main>
+        <div id="note-form-container" class="hidden">
+            <form id="note-form">
+                <input type="text" id="note-title" placeholder="Note Title" required>
+                <textarea id="note-content" placeholder="Start typing your note here..." required></textarea>
+                <div class="form-actions">
+                    <button type="submit" id="save-note-btn">Save Note</button>
+                    <button type="button" id="cancel-note-btn">Cancel</button>
+                </div>
+                <input type="hidden" id="note-id-edit">
+            </form>
+        </div>
+
+        <section id="note-management">
+            <div class="filter-sort-bar">
+                <input type="search" id="search-bar" placeholder="🔎 Search notes (title or content)...">
+                <div class="sort-controls">
+                    <label for="sort-by">Sort By:</label>
+                    <select id="sort-by">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section id="notes-container" class="card-grid">
+            </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
