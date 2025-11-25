@@ -8,6 +8,7 @@ const noteForm = document.getElementById('note-form');
 const searchBar = document.getElementById('search-bar');
 const sortBySelect = document.getElementById('sort-by');
 const modeToggleBtn = document.getElementById('mode-toggle');
+const downloadBtn = document.getElementById('download-btn');
 
 function loadNotes() {
     const storedNotes = localStorage.getItem(NOTES_STORAGE_KEY);
@@ -43,6 +44,16 @@ function mockAiFeatures(content) {
     return { summary, tags, mood };
 }
 
+function applyMarkdown(text) {
+    let html = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    html = html.replace(/^#\s(.*?)$/gm, '<h1>$1</h1>');
+    
+    html = html.replace(/\n/g, '<br>');
+    
+    return html;
+}
+
 function createNoteCardHTML(note, searchTerm) {
     const highlight = (text, term) => {
         if (!term) return text;
@@ -50,8 +61,10 @@ function createNoteCardHTML(note, searchTerm) {
         return text.replace(regex, '<span class="highlight">$1</span>');
     };
 
+    let formattedContent = applyMarkdown(note.content);
+
     const displayTitle = highlight(note.title, searchTerm);
-    const displayContent = highlight(note.content, searchTerm);
+    const displayContent = highlight(formattedContent, searchTerm);
 
     return `
         <div class="note-card ${note.isPinned ? 'pinned-note' : ''}" data-id="${note.id}">
@@ -201,6 +214,37 @@ function toggleDarkMode() {
     localStorage.setItem(THEME_STORAGE_KEY, currentTheme);
 }
 
+function downloadFile(filename, text, mimeType) {
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:' + mimeType + ';charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+}
+
+function downloadNotes() {
+    if (notes.length === 0) {
+        alert('No notes found to download!');
+        return;
+    }
+
+    const format = prompt('Enter format to download (json or txt):').toLowerCase().trim();
+
+    if (format === 'json') {
+        const jsonContent = JSON.stringify(notes, null, 2);
+        downloadFile('smartnotes_backup.json', jsonContent, 'application/json');
+    } else if (format === 'txt') {
+        const textContent = notes.map(note => 
+            `--- Note: ${note.title} ---\nDate: ${new Date(note.createdAt).toLocaleDateString()}\nTags: ${note.tags.join(', ')}\nMood: ${note.mood}\n\n${note.content}\n\n`
+        ).join('====================\n');
+        downloadFile('smartnotes_export.txt', textContent, 'text/plain');
+    } else if (format) {
+        alert('Invalid format. Please enter "json" or "text".');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
     
@@ -229,4 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
     sortBySelect.addEventListener('change', renderNotes);
 
     modeToggleBtn.addEventListener('click', toggleDarkMode);
+    
+    downloadBtn.addEventListener('click', downloadNotes);
 });
